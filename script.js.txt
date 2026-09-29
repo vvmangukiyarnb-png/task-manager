@@ -1,0 +1,111 @@
+const loginForm = document.getElementById('login-form');
+const loginContainer = document.getElementById('login-container');
+const dashboardContainer = document.getElementById('dashboard-container');
+const displayName = document.getElementById('display-name');
+const displayDesignation = document.getElementById('display-designation');
+const logoutBtn = document.getElementById('logout-btn');
+
+const taskForm = document.getElementById('task-form');
+const taskTitleInput = document.getElementById('task-title');
+const assignedToInput = document.getElementById('assigned-to');
+const taskList = document.getElementById('task-list');
+
+// Check if user is already logged in
+let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+if (currentUser) {
+    showDashboard();
+}
+
+// Login Event
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('username').value.trim();
+    const designation = document.getElementById('designation').value.trim();
+
+    currentUser = { name, designation };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    showDashboard();
+});
+
+// Logout Event
+logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('currentUser');
+    loginContainer.classList.remove('hidden');
+    dashboardContainer.classList.add('hidden');
+});
+
+function showDashboard() {
+    loginContainer.classList.add('hidden');
+    dashboardContainer.classList.remove('hidden');
+    displayName.textContent = currentUser.name;
+    displayDesignation.textContent = currentUser.designation;
+    loadTasks();
+}
+
+// Add Task Event
+taskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = taskTitleInput.value.trim();
+    const assignedTo = assignedToInput.value.trim();
+    const addedBy = `${currentUser.name} (${currentUser.designation})`;
+
+    const newTask = {
+        id: Date.now(),
+        text,
+        assignedTo,
+        addedBy,
+        completed: false
+    };
+
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks.push(newTask);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    taskTitleInput.value = '';
+    assignedToInput.value = '';
+    loadTasks();
+});
+
+// Load and Render Tasks
+function loadTasks() {
+    taskList.innerHTML = '';
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    tasks.forEach(task => {
+        const li = document.createElement('li');
+        if (task.completed) li.classList.add('completed');
+
+        li.innerHTML = `
+            <div class="task-info">
+                <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask(${task.id})">
+                <div>
+                    <span class="task-text"><strong>${task.text}</strong></span><br>
+                    <small>Assigned to: ${task.assignedTo} | By: ${task.addedBy}</small>
+                </div>
+            </div>
+            <button onclick="deleteTask(${task.id})" style="background:none; color:red; border:none; cursor:pointer; width:auto;">❌</button>
+        `;
+        taskList.appendChild(li);
+    });
+}
+
+// Toggle Task Completion (Tick Mark)
+function toggleTask(id) {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks = tasks.map(task => {
+        if (task.id === id) {
+            task.completed = !task.completed;
+        }
+        return task;
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    loadTasks();
+}
+
+// Delete Task
+function deleteTask(id) {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks = tasks.filter(task => task.id !== id);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    loadTasks();
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-container" class="card">
+        <h2>Team Task Manager Login</h2>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Enter Your Name" required>
+            <input type="text" id="designation" placeholder="Enter Your Designation (e.g., Manager, Designer)" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <!-- Task Manager Dashboard (Hidden by default) -->
+    <div id="dashboard-container" class="hidden">
+        <header>
+            <div>
+                <h2>Welcome, <span id="display-name"></span>!</h2>
+                <p>Designation: <span id="display-designation"></span></p>
+            </div>
+            <button id="logout-btn">Logout</button>
+        </header>
+
+        <!-- Add Task Form -->
+        <div class="card">
+            <h3>Assign a New Task</h3>
+            <form id="task-form">
+                <input type="text" id="task-title" placeholder="Task Description" required>
+                <input type="text" id="assigned-to" placeholder="Assign to (Whom?)" required>
+                <button type="submit">Add Task</button>
+            </form>
+        </div>
+
+        <!-- Task List -->
+        <div class="card">
+            <h3>Task List</h3>
+            <ul id="task-list"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
